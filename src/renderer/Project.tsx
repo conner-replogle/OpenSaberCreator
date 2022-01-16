@@ -7,7 +7,7 @@ import './Project.css';
 const initialElements = [
     {
         id: '1',
-        type: 'input',
+        type: 'CustomInput',
         data: { label: 'Input Node' },
         position: { x: 200, y: 100 },
     },
@@ -15,15 +15,11 @@ const initialElements = [
         id: '2',
         data: { label: 'Another Node' },
         position: { x: 200, y: 200 },
-    },
-    {
-        id: 'edges-1',
-        source: '1',
-        target: '2',
-        animated: true,
-        style: { stroke: 'red' },
-    },
+    }
 ];
+const nodeTypes = {
+    CustomInput: InputNode,
+};
 function round(n:number,number_to_round_to:number){
     const quotient = n / number_to_round_to;
     const res = Math.round(quotient) * number_to_round_to;
@@ -37,11 +33,15 @@ export default function Project(){
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [elements, setElements] = useState(initialElements);
+    const [selectedElement,setSelectedElement] = useState(null);
     //@ts-ignore
     const onConnect = (params: Edge<any> | Connection) => setElements((els) => addEdge(params, els));
     //@ts-ignore
     const onElementsRemove = (elementsToRemove: Elements<any>) => setElements((els) => removeElements(elementsToRemove, els));
-
+    const onElementClick = (_event,element) => {
+        console.log(element)
+        setSelectedElement(element)
+    }
     const onLoad = (_reactFlowInstance: any) =>
         setReactFlowInstance(_reactFlowInstance);
 
@@ -78,9 +78,11 @@ export default function Project(){
                 onConnect={onConnect}
                 onElementsRemove={onElementsRemove}
                 elementsSelectable={true}
+                onElementClick={onElementClick}
                 onLoad={onLoad}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
+                nodeTypes={nodeTypes}
                 snapToGrid={true}
                 snapGrid={snapGrid}
                 >
